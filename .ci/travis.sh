@@ -8,8 +8,6 @@ else
 fi
 bash miniconda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
-export CPPFLAGS="-I$HOME/miniconda/include"
-ls $HOME/miniconda/include
 
 # Conda Python
 hash -r
@@ -19,6 +17,9 @@ conda info -a
 conda create --yes -n test python=$PYTHON_VERSION
 source activate test
 conda install -c conda-forge numpy=$NUMPY_VERSION setuptools pytest pybind11 fftw
+
+# Add the FFTW include directory
+export CPPFLAGS="-I$HOME/miniconda/envs/test/include"
 
 # Build the extension
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
