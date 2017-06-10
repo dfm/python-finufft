@@ -35,8 +35,12 @@ if not os.path.exists(os.path.join(srcdir, "finufft.h")):
 srcfiles += [os.path.join("finufft", "interface.cpp")]
 ext = Extension("finufft.interface",
                 sources=srcfiles,
-                # language="c++",
                 include_dirs=[srcdir, contribdir])
+
+print("face")
+print(os.environ.get("CONDA_ROOT", None))
+print(os.environ.get("CONDA_HOME", None))
+print(os.environ.get("CONDA_PREFIX", None))
 
 # Hackishly inject a constant into builtins to enable importing of the
 # package before the library is built.
