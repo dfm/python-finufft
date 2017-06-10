@@ -246,7 +246,6 @@ Args:
 
 Returns:
     fk (complex[ms]): FLT complex array of Fourier transform values
-        (increasing mode ordering)
 
 )delim",
     py::arg("xj"),

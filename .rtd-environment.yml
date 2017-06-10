@@ -1,0 +1,10 @@
+name: finufft
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.5
+  - numpy
+  - fftw
+  - pybind11
