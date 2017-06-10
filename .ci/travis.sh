@@ -16,7 +16,7 @@ conda update -q conda
 conda info -a
 conda create --yes -n test python=$PYTHON_VERSION
 source activate test
-conda install -c conda-forge numpy=$NUMPY_VERSION setuptools pytest pybind11
+conda install -c conda-forge numpy=$NUMPY_VERSION setuptools pytest pybind11 fftw
 
 # Build the extension
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
