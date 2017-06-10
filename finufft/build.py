@@ -79,6 +79,24 @@ class build_ext(_build_ext):
             pybind11.get_include(False),
             pybind11.get_include(True),
         ]
+
+        # Find FFTW headers
+        dirs = include_dirs + self.compiler.include_dirs
+        for ext in self.extensions:
+            dirs += ext.include_dirs
+        dirs += [
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
+                sys.executable))), "include")]
+        found_fftw = False
+        for d in dirs:
+            if os.path.exists(os.path.join(d, "fftw3.h")):
+                print("found 'fftw3' in '{0}'".format(d))
+                include_dirs += [d]
+                found_fftw = True
+                break
+        if not found_fftw:
+            raise RuntimeError("could not find the required library 'fftw3'")
+
         for ext in self.extensions:
             ext.include_dirs += include_dirs
 

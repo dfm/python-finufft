@@ -21,7 +21,6 @@ lrsrc = "legendre_rule_fast.cpp"
 shutil.copyfile(os.path.join(contribdir, "legendre_rule_fast.c"), lrsrc)
 
 srcdir = os.path.join(srcdir, "src")
-# AHB removed twopispread.cpp since no longer needed...
 srcfiles = [
     "cnufftspread.cpp", "utils.cpp", "common.cpp",
     "finufft1d.cpp", "finufft2d.cpp", "finufft3d.cpp",
@@ -36,12 +35,6 @@ srcfiles += [os.path.join("finufft", "interface.cpp")]
 ext = Extension("finufft.interface",
                 sources=srcfiles,
                 include_dirs=[srcdir, contribdir])
-
-print("face")
-print(os.environ.get("CONDA_ROOT", None))
-print(os.environ.get("CONDA_HOME", None))
-print(os.environ.get("CONDA_PREFIX", None))
-print(sys.executable)
 
 # Hackishly inject a constant into builtins to enable importing of the
 # package before the library is built.
@@ -59,7 +52,7 @@ setup(
     author="Daniel Foreman-Mackey",
     author_email="foreman.mackey@gmail.com",
     url="https://github.com/dfm/python-finufft",
-    license="TBD",
+    license="Apache 2",
     packages=["finufft"],
     install_requires=["numpy", "pybind11"],
     ext_modules=[ext],
@@ -74,7 +67,7 @@ setup(
         # "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
-        # "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache 2 License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
     ],
