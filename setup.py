@@ -13,7 +13,7 @@ if "publish" in sys.argv[-1]:
     sys.exit()
 
 # The directory for the finufft source
-srcdir = ".."
+srcdir = os.path.join("lib", "finufft")
 contribdir = os.path.join(srcdir, "contrib")
 
 # Hack the legendre_rule_fast code to think that it's C++
@@ -53,7 +53,7 @@ setup(
     version=finufft.__version__,
     author="Daniel Foreman-Mackey",
     author_email="foreman.mackey@gmail.com",
-    url="https://github.com/ahbarnett/finufft",
+    url="https://github.com/dfm/python-finufft",
     license="TBD",
     packages=["finufft"],
     install_requires=["numpy", "pybind11"],
