@@ -41,6 +41,7 @@ print("face")
 print(os.environ.get("CONDA_ROOT", None))
 print(os.environ.get("CONDA_HOME", None))
 print(os.environ.get("CONDA_PREFIX", None))
+print(sys.executable)
 
 # Hackishly inject a constant into builtins to enable importing of the
 # package before the library is built.
