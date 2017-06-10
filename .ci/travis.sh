@@ -9,6 +9,7 @@ fi
 bash miniconda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 export CPPFLAGS="-I$HOME/miniconda/include"
+ls $HOME/miniconda/include
 
 # Conda Python
 hash -r
