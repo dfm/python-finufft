@@ -2,25 +2,34 @@
 
 from __future__ import division, print_function
 
-import numpy as np
-
 import finufft
 from finufft import interface
 
+import numpy as np
+
+import pytest
+
 __all__ = [
-    "test_nufft1d1", "test_nufft1d1", "test_nufft1d3",
+    "test_nufft1d1", "test_nufft1d2", "test_nufft1d3",
 ]
 
 def test_nufft1d1(seed=42, iflag=1):
     np.random.seed(seed)
 
-    ms = int(1e4)
-    n = int(2e4)
+    ms = int(1e3)
+    n = int(2e3)
     tol = 1.0e-9
 
     x = np.random.uniform(-np.pi, np.pi, n)
     c = np.random.uniform(-1.0, 1.0, n) + 1.0j*np.random.uniform(-1.0, 1.0, n)
     f = finufft.nufft1d1(x, c, ms, eps=tol, iflag=iflag)
+
+    # Make sure that this also works with other values of 'fftw'
+    f = finufft.nufft1d1(x, c, ms, eps=tol, iflag=iflag,
+                         fftw=interface.FFTWOptions.measure)
+
+    with pytest.raises(TypeError):
+        f = finufft.nufft1d1(x, c, ms, eps=tol, iflag=iflag, fftw=100)
 
     f0 = interface.dirft1d1(x, c, ms, iflag=iflag)
     assert np.all(np.abs((f - f0) / f0) < 1e-6)
@@ -29,8 +38,8 @@ def test_nufft1d1(seed=42, iflag=1):
 def test_nufft1d2(seed=42, iflag=1):
     np.random.seed(seed)
 
-    ms = int(1e4)
-    n = int(2e4)
+    ms = int(1e3)
+    n = int(2e3)
     tol = 1.0e-9
 
     x = np.random.uniform(-np.pi, np.pi, n)

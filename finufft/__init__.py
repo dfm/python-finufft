@@ -23,8 +23,12 @@ except NameError:
     __FINUFFT_SETUP__ = False
 
 if not __FINUFFT_SETUP__:
-    __all__ = ["nufft1d1", "nufft1d2", "nufft1d3"]
+    __all__ = [
+        "nufft1d1", "nufft1d2", "nufft1d3",
+        "nufft2d1", "nufft2d2", "nufft2d3",
+    ]
 
     from .interface import (
         nufft1d1, nufft1d2, nufft1d3,
+        nufft2d1, nufft2d2, nufft2d3,
     )
