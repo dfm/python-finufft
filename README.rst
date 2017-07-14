@@ -1,4 +1,8 @@
-Python bindings to the Flatiron Institute Non-Uniform FFT (FINUFFT) library.
+Python bindings to the `Flatiron Institute Non-Uniform FFT (FINUFFT) library
+<https://github.com/ahbarnett/finufft>`_.
+
+.. image:: https://travis-ci.org/dfm/python-finufft.svg?branch=master&style=flat
+    :target: https://travis-ci.org/dfm/python-finufft
 
 Installation
 ------------
