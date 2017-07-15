@@ -58,7 +58,7 @@ def test_nufft2d3(seed=42, iflag=1):
     y = np.random.uniform(-np.pi, np.pi, n)
     c = np.random.uniform(-1.0, 1.0, n) + 1.0j*np.random.uniform(-1.0, 1.0, n)
     s = 0.5 * n * (1.7 + np.random.uniform(-1.0, 1.0, ms))
-    t = 0.5 * n * (1.7 + np.random.uniform(-1.0, 1.0, ms))
+    t = 0.5 * n * (-0.5 + np.random.uniform(-1.0, 1.0, ms))
 
     f = finufft.nufft2d3(x, y, c, s, t, eps=tol, iflag=iflag)
     f0 = interface.dirft2d3(x, y, c, s, t, iflag=iflag)
