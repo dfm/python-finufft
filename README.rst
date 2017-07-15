@@ -1,29 +1,35 @@
-Just scribbles for now, Barnett 3/27/17
+Python bindings to the `Flatiron Institute Non-Uniform FFT (FINUFFT) library
+<https://github.com/ahbarnett/finufft>`_.
 
+.. image:: https://travis-ci.org/dfm/python-finufft.svg?branch=master&style=flat
+    :target: https://travis-ci.org/dfm/python-finufft
+.. image:: http://readthedocs.org/projects/finufft/badge/?version=latest&style=flat
+    :target: http://finufft.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
-Install prereqs:
+Installation
+------------
 
-sudo apt install python python-pip
+If you're using `conda <https://conda.io>`_, you can install the prerequisites as follows:
 
-sudo pip install pybind11
+.. code-block:: bash
 
+    conda install -c conda-forge numpy pybind11
 
-Linux build: (see ../makefile)
+Then to build:
 
-```
-cd python
-rm -rf build
-python setup.py build_ext --inplace
-```
+.. code-block:: bash
 
+    git clone --recursive https://github.com/dfm/python-finufft.git
+    cd python-finufft
+    python setup.py install
+    
+**Note for macOS users:** The standard compilers on macOS are not compatible with
+OpenMP so you'll need to install GCC to get OpenMP support. Using `Homebrew
+<https://brew.sh/>`_:
 
-Here's a couple of hints for the Mac OSX openmp install from Dan:
+.. code-block:: bash
 
-```
-brew reinstall gcc --without-multilib
-brew reinstall fftw --with-openmp
-CC=/usr/local/bin/gcc-6 CXX=/usr/local/bin/g++-6
-python setup.py build_ext --inplace
-```
-
-
+    brew reinstall gcc --without-multilib
+    brew reinstall fftw --with-openmp
+    CC=/usr/local/bin/gcc-6 CXX=/usr/local/bin/g++-6 python setup.py install
