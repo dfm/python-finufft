@@ -9,4 +9,5 @@ Python bindings to the `Flatiron Institute Non-Uniform FFT (FINUFFT) library
 .. image:: http://img.shields.io/badge/license-Apache-blue.svg?style=flat
     :target: https://github.com/dfm/python-finufft/blob/master/LICENSE
 
-Read the documentation: `finufft.readthedocs.io <http://finufft.readthedocs.io>`_.
+Read the documentation: `finufft.readthedocs.io <http://finufft.readthedocs.io>`_
+****
