@@ -6,6 +6,8 @@ Python bindings to the `Flatiron Institute Non-Uniform FFT (FINUFFT) library
 .. image:: http://readthedocs.org/projects/finufft/badge/?version=latest&style=flat
     :target: http://finufft.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
+.. image:: http://img.shields.io/badge/license-Apache-blue.svg?style=flat
+    :target: https://github.com/dfm/python-finufft/blob/master/LICENSE
 
 Installation
 ------------
