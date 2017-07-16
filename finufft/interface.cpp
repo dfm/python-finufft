@@ -193,7 +193,7 @@ py::array_t<CPX> nufft2d2(
   auto buf_x = xj.request(),
        buf_y = yj.request(),
        buf_F = fk.request();
-  if (buf_x.ndim != 1 || buf_y.ndim != 1)
+  if (buf_x.ndim != 1 || buf_y.ndim != 1 || buf_F.ndim != 2)
     throw finufft_error("xj and yj must be 1-dimensional; fk must be 2-dimensional");
   long n = buf_x.size, ms = buf_F.shape[1], mt = buf_F.shape[0];
 
@@ -251,6 +251,115 @@ py::array_t<CPX> nufft2d3(
   );
 
   CHECK_FLAG(nufft2d3)
+  return result;
+}
+
+// ------------
+// 3D INTERFACE
+// ------------
+
+py::array_t<CPX> nufft3d1(
+  py::array_t<FLT> xj, py::array_t<FLT> yj, py::array_t<FLT> zj, py::array_t<CPX> cj,
+  INT ms, INT mt, INT mu,
+  FLT eps, int iflag, FLT R, int debug, int spread_debug, int spread_sort, FFTWOptions fftw
+) {
+  // Check the dimensions
+  auto buf_x = xj.request(),
+       buf_y = yj.request(),
+       buf_z = zj.request(),
+       buf_c = cj.request();
+  if (buf_x.ndim != 1 || buf_y.ndim != 1 || buf_z.ndim != 1 || buf_c.ndim != 1)
+    throw finufft_error("xj, yj, zj, and cj must be 1-dimensional");
+  if (buf_x.size != buf_y.size || buf_x.size != buf_z.size || buf_x.size != buf_c.size)
+    throw finufft_error("xj, yj, zj, and cj must be the same length");
+  long n = buf_x.size;
+
+  ASSEMBLE_OPTIONS
+
+  // Allocate output
+  auto result = py::array_t<CPX>({size_t(mu), size_t(mt), size_t(ms)});
+  auto buf_F = result.request();
+
+  // Run the driver
+  int ier = finufft3d1(
+    n, (FLT*)buf_x.ptr, (FLT*)buf_y.ptr, (FLT*)buf_z.ptr, (CPX*)buf_c.ptr,
+    iflag, eps, ms, mt, mu, (CPX*)buf_F.ptr,
+    opts
+  );
+
+  CHECK_FLAG(nufft3d1)
+  return result;
+}
+
+py::array_t<CPX> nufft3d2(
+  py::array_t<FLT> xj, py::array_t<FLT> yj, py::array_t<FLT> zj, py::array_t<CPX> fk,
+  FLT eps, int iflag, FLT R, int debug, int spread_debug, int spread_sort, FFTWOptions fftw
+) {
+  // Check the dimensions
+  auto buf_x = xj.request(),
+       buf_y = yj.request(),
+       buf_z = zj.request(),
+       buf_F = fk.request();
+  if (buf_x.ndim != 1 || buf_y.ndim != 1 || buf_z.ndim != 1 || buf_F.ndim != 3)
+    throw finufft_error("xj, yj and zj must be 1-dimensional; fk must be 3-dimensional");
+  long n = buf_x.size, ms = buf_F.shape[2], mt = buf_F.shape[1], mu = buf_F.shape[0];
+
+  ASSEMBLE_OPTIONS
+
+  // Allocate output
+  auto result = py::array_t<CPX>(n);
+  auto buf_c = result.request();
+
+  // Run the driver
+  int ier = finufft3d2(
+    n, (FLT*)buf_x.ptr, (FLT*)buf_y.ptr, (FLT*)buf_z.ptr, (CPX*)buf_c.ptr,
+    iflag, eps, ms, mt, mu, (CPX*)buf_F.ptr,
+    opts
+  );
+
+  CHECK_FLAG(nufft3d2)
+  return result;
+}
+
+py::array_t<CPX> nufft3d3(
+  py::array_t<FLT> xj, py::array_t<FLT> yj, py::array_t<FLT> zj, py::array_t<CPX> cj,
+  py::array_t<FLT> s, py::array_t<FLT> t, py::array_t<FLT> u,
+  FLT eps, int iflag, FLT R, int debug, int spread_debug, int spread_sort, FFTWOptions fftw
+) {
+  // Check the dimensions
+  auto buf_x = xj.request(),
+       buf_y = yj.request(),
+       buf_z = zj.request(),
+       buf_c = cj.request();
+  if (buf_x.ndim != 1 || buf_y.ndim != 1 || buf_z.ndim != 1 || buf_c.ndim != 1)
+    throw finufft_error("xj, yj, zi, and cj must be 1-dimensional");
+  if (buf_x.size != buf_y.size || buf_x.size != buf_z.size || buf_x.size != buf_c.size)
+    throw finufft_error("xj, yj, zj, and cj must be the same length");
+  long n = buf_x.size;
+
+  auto buf_s = s.request(),
+       buf_t = t.request(),
+       buf_u = u.request();
+  if (buf_s.ndim != 1 || buf_t.ndim != 1 || buf_u.ndim != 1)
+    throw finufft_error("s, t and u must be 1-dimensional");
+  if (buf_s.size != buf_t.size || buf_s.size != buf_u.size)
+    throw finufft_error("s, t and u must be the same length");
+  long nk = buf_s.size;
+
+  ASSEMBLE_OPTIONS
+
+  // Allocate output
+  auto result = py::array_t<CPX>(nk);
+  auto buf_F = result.request();
+
+  // Run the driver
+  int ier = finufft3d3(
+    n, (FLT*)buf_x.ptr, (FLT*)buf_y.ptr, (FLT*)buf_z.ptr, (CPX*)buf_c.ptr,
+    iflag, eps, nk, (FLT*)buf_s.ptr, (FLT*)buf_t.ptr, (FLT*)buf_u.ptr, (CPX*)buf_F.ptr,
+    opts
+  );
+
+  CHECK_FLAG(nufft3d3)
   return result;
 }
 
@@ -419,6 +528,95 @@ py::array_t<CPX> dirft2d3_(
   return result;
 }
 
+py::array_t<CPX> dirft3d1_(
+  py::array_t<FLT> xj, py::array_t<FLT> yj, py::array_t<FLT> zj, py::array_t<CPX> cj, INT ms, INT mt, INT mu, int iflag
+) {
+  // Check the dimensions
+  auto buf_x = xj.request(),
+       buf_y = yj.request(),
+       buf_z = zj.request(),
+       buf_c = cj.request();
+  if (buf_x.ndim != 1 || buf_y.ndim != 1 || buf_z.ndim != 1 || buf_c.ndim != 1)
+    throw finufft_error("xj, yj, zj, and cj must be 1-dimensional");
+  if (buf_x.size != buf_y.size || buf_x.size != buf_z.size || buf_x.size != buf_c.size)
+    throw finufft_error("xj, yj, zj, and cj must be the same length");
+  long n = buf_x.size;
+
+  // Allocate output
+  auto result = py::array_t<CPX>({size_t(mu), size_t(mt), size_t(ms)});
+  auto buf_F = result.request();
+
+  // Run the driver
+  dirft3d1(
+    n, (FLT*)buf_x.ptr, (FLT*)buf_y.ptr, (FLT*)buf_z.ptr, (CPX*)buf_c.ptr,
+    iflag, ms, mt, mu, (CPX*)buf_F.ptr
+  );
+
+  return result;
+}
+
+py::array_t<CPX> dirft3d2_(
+  py::array_t<FLT> xj, py::array_t<FLT> yj, py::array_t<FLT> zj, py::array_t<CPX> fk, int iflag
+) {
+  // Check the dimensions
+  auto buf_x = xj.request(),
+       buf_y = yj.request(),
+       buf_z = zj.request(),
+       buf_F = fk.request();
+  if (buf_x.ndim != 1 || buf_y.ndim != 1 || buf_z.ndim != 1 || buf_F.ndim != 3)
+    throw finufft_error("xj, yj and zj must be 1-dimensional; fk must be 3-dimensional");
+  long n = buf_x.size, ms = buf_F.shape[2], mt = buf_F.shape[1], mu = buf_F.shape[0];
+
+  // Allocate output
+  auto result = py::array_t<CPX>(n);
+  auto buf_c = result.request();
+
+  // Run the driver
+  dirft3d2(
+    n, (FLT*)buf_x.ptr, (FLT*)buf_y.ptr, (FLT*)buf_z.ptr, (CPX*)buf_c.ptr,
+    iflag, ms, mt, mu, (CPX*)buf_F.ptr
+  );
+
+  return result;
+}
+
+py::array_t<CPX> dirft3d3_(
+  py::array_t<FLT> xj, py::array_t<FLT> yj, py::array_t<FLT> zj, py::array_t<CPX> cj,
+  py::array_t<FLT> s, py::array_t<FLT> t, py::array_t<FLT> u, int iflag
+) {
+  // Check the dimensions
+  auto buf_x = xj.request(),
+       buf_y = yj.request(),
+       buf_z = zj.request(),
+       buf_c = cj.request();
+  if (buf_x.ndim != 1 || buf_y.ndim != 1 || buf_z.ndim != 1 || buf_c.ndim != 1)
+    throw finufft_error("xj, yj, zi, and cj must be 1-dimensional");
+  if (buf_x.size != buf_y.size || buf_x.size != buf_z.size || buf_x.size != buf_c.size)
+    throw finufft_error("xj, yj, zj, and cj must be the same length");
+  long n = buf_x.size;
+
+  auto buf_s = s.request(),
+       buf_t = t.request(),
+       buf_u = u.request();
+  if (buf_s.ndim != 1 || buf_t.ndim != 1 || buf_u.ndim != 1)
+    throw finufft_error("s, t and u must be 1-dimensional");
+  if (buf_s.size != buf_t.size || buf_s.size != buf_u.size)
+    throw finufft_error("s, t and u must be the same length");
+  long nk = buf_s.size;
+
+  // Allocate output
+  auto result = py::array_t<CPX>(nk);
+  auto buf_F = result.request();
+
+  // Run the driver
+  dirft3d3(
+    n, (FLT*)buf_x.ptr, (FLT*)buf_y.ptr, (FLT*)buf_z.ptr, (CPX*)buf_c.ptr,
+    iflag, nk, (FLT*)buf_s.ptr, (FLT*)buf_t.ptr, (FLT*)buf_u.ptr, (CPX*)buf_F.ptr
+  );
+
+  return result;
+}
+
 
 PYBIND11_PLUGIN(interface) {
   py::module m("interface", R"delim(
@@ -557,7 +755,7 @@ Args:
     ms (int): number of Fourier modes computed, may be even or odd;
         in either case the mode range is integers lying in [-ms/2, (ms-1)/2]
     mt (int): number of Fourier modes computed, may be even or odd;
-        in either case the mode range is integers lying in [-ms/2, (ms-1)/2]
+        in either case the mode range is integers lying in [-mt/2, (mt-1)/2]
     eps (float): precision requested (>1e-16)
     iflag (int): if >=0, uses + sign in exponential, otherwise - sign.
 
@@ -648,6 +846,134 @@ Returns:
     py::arg("fftw") = FFTWOptions::estimate
   );
 
+  // ------------
+  // 3D INTERFACE
+  // ------------
+
+  m.def("nufft3d1", &nufft3d1, R"delim(
+Type-1 3D complex nonuniform FFT.
+
+::
+
+                    nj-1
+    f[k1,k2,k3] =   SUM  c[j] exp(+-i (k1 x[j] + k2 y[j] + k3 z[j]))
+                    j=0
+
+    for -ms/2 <= k1 <= (ms-1)/2,  -mt/2 <= k2 <= (mt-1)/2,
+        -mu/2 <= k3 <= (mu-1)/2.
+
+Args:
+    xj (float[n]): location of sources on interval [-pi, pi]
+    yj (float[n]): location of sources on interval [-pi, pi]
+    zj (float[n]): location of sources on interval [-pi, pi]
+    cj (complex[n]): FLT complex array of source strengths
+    ms (int): number of Fourier modes computed, may be even or odd;
+        in either case the mode range is integers lying in [-ms/2, (ms-1)/2]
+    mt (int): number of Fourier modes computed, may be even or odd;
+        in either case the mode range is integers lying in [-mt/2, (mt-1)/2]
+    mu (int): number of Fourier modes computed, may be even or odd;
+        in either case the mode range is integers lying in [-mu/2, (mu-1)/2]
+    eps (float): precision requested (>1e-16)
+    iflag (int): if >=0, uses + sign in exponential, otherwise - sign.
+
+Returns:
+    fk (complex[mt, ms]): FLT complex array of Fourier transform values
+
+)delim",
+    py::arg("xj"),
+    py::arg("yj"),
+    py::arg("zj"),
+    py::arg("cj"),
+    py::arg("ms"),
+    py::arg("mt"),
+    py::arg("mu"),
+    py::arg("eps") = 1.0e-9,
+    py::arg("iflag") = 1,
+    py::arg("R") = 2.0,
+    py::arg("debug") = 0,
+    py::arg("spread_debug") = 0,
+    py::arg("spread_sort") = 1,
+    py::arg("fftw") = FFTWOptions::estimate
+  );
+
+  m.def("nufft3d2", &nufft3d2, R"delim(
+Type-2 3D complex nonuniform FFT
+
+::
+
+    cj[j] =    SUM   fk[k1,k2,k3] exp(+/-i (k1 xj[j] + k2 yj[j] + k3 zj[j]))
+             k1,k2,k3
+
+    for j = 0,...,nj-1
+    where sum is over -ms/2 <= k1 <= (ms-1)/2, -mt/2 <= k2 <= (mt-1)/2,
+                      -mu/2 <= k3 <= (mu-1)/2
+
+Args:
+    xj (float[n]): location of sources on interval [-pi, pi]
+    yj (float[n]): location of sources on interval [-pi, pi]
+    zj (float[n]): location of sources on interval [-pi, pi]
+    fk (complex[mu, mt, ms]): complex FLT array of nj answers at targets
+    eps (float): precision requested (>1e-16)
+    iflag (int): if >=0, uses + sign in exponential, otherwise - sign.
+
+Returns:
+    cj (complex[n]): FLT complex array of source strengths
+
+)delim",
+    py::arg("xj"),
+    py::arg("yj"),
+    py::arg("zj"),
+    py::arg("fk"),
+    py::arg("eps") = 1.0e-9,
+    py::arg("iflag") = 1,
+    py::arg("R") = 2.0,
+    py::arg("debug") = 0,
+    py::arg("spread_debug") = 0,
+    py::arg("spread_sort") = 1,
+    py::arg("fftw") = FFTWOptions::estimate
+  );
+
+  m.def("nufft3d3", &nufft3d3, R"delim(
+Type-3 3D complex nonuniform FFT.
+
+::
+
+               nj-1
+     fk[k]  =  SUM   c[j] exp(+-i (s[k] xj[j] + t[k] yj[j] + u[k] zj[j]),
+               j=0
+                          for k=0,...,nk-1
+
+Args:
+    xj (float[n]): location of sources in R
+    yj (float[n]): location of sources in R
+    zj (float[n]): location of sources in R
+    cj (complex[n]): FLT complex array of source strengths
+    s (float[nk]): frequency locations of targets in R.
+    t (float[nk]): frequency locations of targets in R.
+    u (float[nk]): frequency locations of targets in R.
+    eps (float): precision requested (>1e-16)
+    iflag (int): if >=0, uses + sign in exponential, otherwise - sign.
+
+Returns:
+     fk (complex[nk]): complex FLT array of nk answers at targets
+
+)delim",
+    py::arg("xj"),
+    py::arg("yj"),
+    py::arg("zj"),
+    py::arg("cj"),
+    py::arg("s"),
+    py::arg("t"),
+    py::arg("u"),
+    py::arg("eps") = 1.0e-9,
+    py::arg("iflag") = 1,
+    py::arg("R") = 2.0,
+    py::arg("debug") = 0,
+    py::arg("spread_debug") = 0,
+    py::arg("spread_sort") = 1,
+    py::arg("fftw") = FFTWOptions::estimate
+  );
+
   // DIRECT
   m.def("dirft1d1", &dirft1d1_, "Type-1 1D direct",
     py::arg("xj"),
@@ -689,6 +1015,36 @@ Returns:
     py::arg("cj"),
     py::arg("s"),
     py::arg("t"),
+    py::arg("iflag") = 1
+  );
+
+  m.def("dirft3d1", &dirft3d1_, "Type-1 3D direct",
+    py::arg("xj"),
+    py::arg("yj"),
+    py::arg("zj"),
+    py::arg("cj"),
+    py::arg("ms"),
+    py::arg("mt"),
+    py::arg("mu"),
+    py::arg("iflag") = 1
+  );
+
+  m.def("dirft3d2", &dirft3d2_, "Type-2 3D direct",
+    py::arg("xj"),
+    py::arg("yj"),
+    py::arg("zj"),
+    py::arg("fk"),
+    py::arg("iflag") = 1
+  );
+
+  m.def("dirft3d3", &dirft3d3_, "Type-3 3D direct",
+    py::arg("xj"),
+    py::arg("yj"),
+    py::arg("zj"),
+    py::arg("cj"),
+    py::arg("s"),
+    py::arg("t"),
+    py::arg("u"),
     py::arg("iflag") = 1
   );
 

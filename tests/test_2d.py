@@ -7,8 +7,6 @@ from finufft import interface
 
 import numpy as np
 
-import pytest
-
 __all__ = [
     "test_nufft2d1", "test_nufft2d2", "test_nufft2d3",
 ]
