@@ -87,6 +87,7 @@ class build_ext(_build_ext):
         dirs += [
             os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
                 sys.executable))), "include")]
+        print(dirs)
         found_fftw = False
         for d in dirs:
             if os.path.exists(os.path.join(d, "fftw3.h")):
